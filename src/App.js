@@ -43,10 +43,10 @@ function App() {
     // Add entry to beginning of array (most recent first)
     isUpdatingRef.current = true;
     setProfilingEntries(prev => [entry, ...prev]);
-    // Reset flag after state update
-    setTimeout(() => {
+    // Reset flag after state update using microtask for better performance
+    queueMicrotask(() => {
       isUpdatingRef.current = false;
-    }, 0);
+    });
 
     console.log(`⚡ Profiler Report: ${id}`);
     console.table({

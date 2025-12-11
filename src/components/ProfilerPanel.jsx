@@ -5,7 +5,7 @@ const ProfilerPanel = ({ entries, onDownload, onClear }) => {
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString() + "." + date.getMilliseconds();
+    return date.toLocaleTimeString() + "." + date.getMilliseconds().toString().padStart(3, '0');
   };
 
   const displayEntries = entries.slice(0, 20);
