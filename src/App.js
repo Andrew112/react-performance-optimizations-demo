@@ -1,6 +1,6 @@
 import "./styles.css";
 
-import React, { Profiler, useCallback, useState } from "react";
+import React, { Profiler, useCallback, useRef, useState } from "react";
 
 import ExpensiveList from "./components/ExpensiveList";
 import ProfilerPanel from "./components/ProfilerPanel";
@@ -12,6 +12,8 @@ function App() {
   const [filter, setFilter] = useState("all");
   const [enableProfiling, setEnableProfiling] = useState(true);
   const [profilingEntries, setProfilingEntries] = useState([]);
+  const batchTimeoutRef = useRef(null);
+  const pendingEntriesRef = useRef([]);
 
   // Profiler callback
   const onRenderCallback = (
@@ -20,8 +22,7 @@ function App() {
     actualDuration,     // Time spent rendering the committed update
     baseDuration,       // Estimated duration without memoization
     startTime,          // When React started rendering
-    commitTime,         // When React committed
-    interactions        // Interaction set
+    commitTime          // When React committed
   ) => {
     const entry = {
       id,
@@ -30,12 +31,21 @@ function App() {
       baseDuration,
       startTime,
       commitTime,
-      interactionsCount: interactions.size,
+      interactionsCount: 0, // interactions API removed in React 19
       timestamp: Date.now(),
     };
 
-    // Store in state (most recent first)
-    setProfilingEntries((prev) => [entry, ...prev]);
+    // Batch entries to avoid excessive re-renders
+    pendingEntriesRef.current.push(entry);
+    
+    if (batchTimeoutRef.current) {
+      clearTimeout(batchTimeoutRef.current);
+    }
+    
+    batchTimeoutRef.current = setTimeout(() => {
+      setProfilingEntries((prev) => [...pendingEntriesRef.current, ...prev]);
+      pendingEntriesRef.current = [];
+    }, 100);
 
     // Also log to console
     console.log(`⚡ Profiler Report: ${id}`);
@@ -44,8 +54,7 @@ function App() {
       actualDuration,
       baseDuration,
       startTime,
-      commitTime,
-      interactions: interactions.size
+      commitTime
     });
   };
 
