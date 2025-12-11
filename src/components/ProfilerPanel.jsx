@@ -5,7 +5,8 @@ function ProfilerPanel({ entries = [], onDownload, onClear }) {
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString() + "." + date.getMilliseconds();
+    const ms = date.getMilliseconds().toString().padStart(3, '0');
+    return date.toLocaleTimeString() + "." + ms;
   };
 
   const lastEntries = entries.slice(0, 20);
