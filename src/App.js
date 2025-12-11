@@ -1,6 +1,6 @@
 import "./styles.css";
 
-import React, { Profiler, useCallback, useState } from "react";
+import React, { Profiler, useCallback, useRef, useState } from "react";
 
 import ExpensiveList from "./components/ExpensiveList";
 import ProfilerPanel from "./components/ProfilerPanel";
@@ -12,6 +12,7 @@ function App() {
   const [filter, setFilter] = useState("all");
   const [enableProfiling, setEnableProfiling] = useState(true);
   const [profilingEntries, setProfilingEntries] = useState([]);
+  const isUpdatingRef = useRef(false);
 
   // Profiler callback
   const onRenderCallback = (
@@ -23,6 +24,11 @@ function App() {
     commitTime,         // When React committed
     interactions        // Interaction set
   ) => {
+    // Prevent infinite loop by skipping if we're already updating
+    if (isUpdatingRef.current) {
+      return;
+    }
+
     const entry = {
       id,
       phase,
@@ -30,12 +36,17 @@ function App() {
       baseDuration,
       startTime,
       commitTime,
-      interactionsCount: interactions.size,
+      interactionsCount: interactions ? interactions.size : 0,
       timestamp: Date.now()
     };
 
     // Add entry to beginning of array (most recent first)
+    isUpdatingRef.current = true;
     setProfilingEntries(prev => [entry, ...prev]);
+    // Reset flag after state update
+    setTimeout(() => {
+      isUpdatingRef.current = false;
+    }, 0);
 
     console.log(`⚡ Profiler Report: ${id}`);
     console.table({
@@ -44,7 +55,7 @@ function App() {
       baseDuration,
       startTime,
       commitTime,
-      interactions: interactions.size
+      interactions: interactions ? interactions.size : 0
     });
   };
 
