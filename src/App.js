@@ -1,6 +1,6 @@
 import "./styles.css";
 
-import React, { Profiler, useCallback, useRef, useState } from "react";
+import React, { Profiler, useCallback, useEffect, useRef, useState } from "react";
 
 import ExpensiveList from "./components/ExpensiveList";
 import ProfilerPanel from "./components/ProfilerPanel";
@@ -14,6 +14,15 @@ function App() {
   const [profilingEntries, setProfilingEntries] = useState([]);
   const batchTimeoutRef = useRef(null);
   const pendingEntriesRef = useRef([]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (batchTimeoutRef.current) {
+        clearTimeout(batchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Profiler callback
   const onRenderCallback = (

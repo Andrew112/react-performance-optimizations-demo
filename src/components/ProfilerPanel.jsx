@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+const MAX_DISPLAYED_ENTRIES = 20;
+
 function ProfilerPanel({ entries, onDownload, onClear }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -11,8 +13,8 @@ function ProfilerPanel({ entries, onDownload, onClear }) {
     return duration.toFixed(2);
   };
 
-  // Show last 20 entries
-  const displayedEntries = entries.slice(0, 20);
+  // Show first N entries (most recent, since array is ordered newest first)
+  const displayedEntries = entries.slice(0, MAX_DISPLAYED_ENTRIES);
 
   return (
     <div className="profiler-panel">
@@ -33,8 +35,8 @@ function ProfilerPanel({ entries, onDownload, onClear }) {
               <strong>Total Entries:</strong> {entries.length}
             </p>
             <p>
-              <strong>Showing:</strong> Last {Math.min(20, entries.length)}{" "}
-              entries
+              <strong>Showing:</strong> Last{" "}
+              {Math.min(MAX_DISPLAYED_ENTRIES, entries.length)} entries
             </p>
           </div>
 
@@ -62,7 +64,7 @@ function ProfilerPanel({ entries, onDownload, onClear }) {
                 </thead>
                 <tbody>
                   {displayedEntries.map((entry, index) => (
-                    <tr key={index}>
+                    <tr key={`${entry.id}-${entry.timestamp}-${index}`}>
                       <td>{formatTimestamp(entry.timestamp)}</td>
                       <td>{entry.id}</td>
                       <td>{entry.phase}</td>
