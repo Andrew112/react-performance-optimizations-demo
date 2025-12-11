@@ -3,6 +3,7 @@ import "./styles.css";
 import React, { Profiler, useCallback, useState } from "react";
 
 import ExpensiveList from "./components/ExpensiveList";
+import ProfilerPanel from "./components/ProfilerPanel";
 import { generateItems } from "./utils/generateItems";
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
   const [items] = useState(generateItems);
   const [filter, setFilter] = useState("all");
   const [enableProfiling, setEnableProfiling] = useState(true);
+  const [profilingEntries, setProfilingEntries] = useState([]);
 
   // Profiler callback
   const onRenderCallback = (
@@ -21,6 +23,21 @@ function App() {
     commitTime,         // When React committed
     interactions        // Interaction set
   ) => {
+    const entry = {
+      id,
+      phase,
+      actualDuration,
+      baseDuration,
+      startTime,
+      commitTime,
+      interactionsCount: interactions.size,
+      timestamp: Date.now(),
+    };
+
+    // Store in state (most recent first)
+    setProfilingEntries((prev) => [entry, ...prev]);
+
+    // Also log to console
     console.log(`⚡ Profiler Report: ${id}`);
     console.table({
       phase,
@@ -30,6 +47,25 @@ function App() {
       commitTime,
       interactions: interactions.size
     });
+  };
+
+  // Download profiling logs as JSON
+  const handleDownloadLogs = () => {
+    const dataStr = JSON.stringify(profilingEntries, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `profiler-logs-${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Clear profiling logs
+  const handleClearLogs = () => {
+    setProfilingEntries([]);
   };
 
   const handleItemClick = useCallback((item) => {
@@ -71,6 +107,12 @@ function App() {
           onItemClick={handleItemClick}
         />
       )}
+
+      <ProfilerPanel
+        entries={profilingEntries}
+        onDownload={handleDownloadLogs}
+        onClear={handleClearLogs}
+      />
     </div>
   );
 }
