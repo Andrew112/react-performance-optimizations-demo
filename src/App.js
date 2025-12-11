@@ -1,8 +1,9 @@
-import "./styles.css";
+ import "./styles.css";
 
 import React, { Profiler, useCallback, useState } from "react";
 
 import ExpensiveList from "./components/ExpensiveList";
+import ProfilerPanel from "./components/ProfilerPanel";
 import { generateItems } from "./utils/generateItems";
 
 function App() {
@@ -11,7 +12,10 @@ function App() {
   const [filter, setFilter] = useState("all");
   const [enableProfiling, setEnableProfiling] = useState(true);
 
-  // Profiler callback
+  // New: profiling entries collected in state
+  const [profilingEntries, setProfilingEntries] = useState([]);
+
+  // Profiler callback now records data into state (rather than just console.table)
   const onRenderCallback = (
     id,                 // Profiler ID
     phase,              // "mount" or "update"
@@ -21,20 +25,57 @@ function App() {
     commitTime,         // When React committed
     interactions        // Interaction set
   ) => {
-    console.log(`⚡ Profiler Report: ${id}`);
-    console.table({
+    const entry = {
+      id,
       phase,
       actualDuration,
       baseDuration,
       startTime,
       commitTime,
-      interactions: interactions.size
+      interactionsCount: interactions ? interactions.size : 0,
+      timestamp: Date.now()
+    };
+
+    // Keep most recent entries at the front
+    setProfilingEntries((prev) => [entry, ...prev]);
+
+    // Still log a compact console message for quick debugging
+    console.log(`⚡ Profiler Report: ${id}`, {
+      phase,
+      actualDuration,
+      baseDuration,
+      startTime,
+      commitTime,
+      interactionsCount: interactions ? interactions.size : 0
     });
   };
 
+  // Stable callback example: item click handler
   const handleItemClick = useCallback((item) => {
     console.log("Item clicked:", item);
   }, []);
+
+  // Export profiling logs as a JSON file
+  const downloadProfiling = () => {
+    try {
+      const data = JSON.stringify(profilingEntries, null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `profiling-logs-${new Date().toISOString()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to download profiling logs", err);
+    }
+  };
+
+  const clearProfiling = () => {
+    setProfilingEntries([]);
+  };
 
   return (
     <div className="container">
@@ -56,6 +97,7 @@ function App() {
         <option value="odd">Odd</option>
       </select>
 
+      {/* Profiler (kept, but onRenderCallback now writes into state) */}
       {enableProfiling ? (
         <Profiler id="ExpensiveListProfiler" onRender={onRenderCallback}>
           <ExpensiveList
@@ -71,6 +113,13 @@ function App() {
           onItemClick={handleItemClick}
         />
       )}
+
+      {/* New: ProfilerPanel UI */}
+      <ProfilerPanel
+        entries={profilingEntries}
+        onDownload={downloadProfiling}
+        onClear={clearProfiling}
+      />
     </div>
   );
 }
