@@ -1,8 +1,9 @@
 import "./styles.css";
 
-import React, { Profiler, useCallback, useState } from "react";
+import React, { Profiler, useCallback, useRef, useState } from "react";
 
 import ExpensiveList from "./components/ExpensiveList";
+import ProfilerPanel from "./components/ProfilerPanel";
 import { generateItems } from "./utils/generateItems";
 
 function App() {
@@ -10,6 +11,8 @@ function App() {
   const [items] = useState(generateItems);
   const [filter, setFilter] = useState("all");
   const [enableProfiling, setEnableProfiling] = useState(true);
+  const [profilingEntries, setProfilingEntries] = useState([]);
+  const updateTimeoutRef = useRef(null);
 
   // Profiler callback
   const onRenderCallback = (
@@ -21,6 +24,25 @@ function App() {
     commitTime,         // When React committed
     interactions        // Interaction set
   ) => {
+    const entry = {
+      id,
+      phase,
+      actualDuration,
+      baseDuration,
+      startTime,
+      commitTime,
+      interactionsCount: interactions ? interactions.size : 0,
+      timestamp: Date.now()
+    };
+    
+    // Use setTimeout to defer the state update and prevent infinite loops
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+    updateTimeoutRef.current = setTimeout(() => {
+      setProfilingEntries((prev) => [entry, ...prev]);
+    }, 0);
+    
     console.log(`⚡ Profiler Report: ${id}`);
     console.table({
       phase,
@@ -28,13 +50,30 @@ function App() {
       baseDuration,
       startTime,
       commitTime,
-      interactions: interactions.size
+      interactions: interactions ? interactions.size : 0
     });
   };
 
   const handleItemClick = useCallback((item) => {
     console.log("Item clicked:", item);
   }, []);
+
+  const downloadLogs = () => {
+    const dataStr = JSON.stringify(profilingEntries, null, 2);
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `profiler-logs-${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const clearLogs = () => {
+    setProfilingEntries([]);
+  };
 
   return (
     <div className="container">
@@ -71,6 +110,12 @@ function App() {
           onItemClick={handleItemClick}
         />
       )}
+
+      <ProfilerPanel
+        entries={profilingEntries}
+        onDownload={downloadLogs}
+        onClear={clearLogs}
+      />
     </div>
   );
 }
