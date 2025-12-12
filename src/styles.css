@@ -93,3 +93,12 @@
   color: #6b7280;
   font-size: 0.85rem;
 }
+
+.footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e1e1;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+}

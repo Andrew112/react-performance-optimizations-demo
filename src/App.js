@@ -1,4 +1,4 @@
- import "./styles.css";
+import "./styles.css";
 
 import React, { Profiler, useCallback, useState } from "react";
 
@@ -120,6 +120,10 @@ function App() {
         onDownload={downloadProfiling}
         onClear={clearProfiling}
       />
+
+      <footer className="footer">
+        <p>&copy; {new Date().getFullYear()} Coleman. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
