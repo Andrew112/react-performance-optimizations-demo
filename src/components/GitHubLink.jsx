@@ -4,10 +4,10 @@ export default function GitHubLink() {
   return (
     <a
       className="github-link"
-      href="https://github.com/planetoftheweb/Screenshotter"
+      href="https://github.com/Andrew112/react-performance-optimizations-demo"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Screenshotter GitHub repository"
+      aria-label="React Performance Optimizations Demo GitHub repository"
       style={{ display: 'inline-flex', alignItems: 'center' }}
     >
       <svg aria-hidden="true" height="20" viewBox="0 0 16 16" width="20" fill="currentColor" style={{ verticalAlign: 'middle', marginRight: 6 }}>

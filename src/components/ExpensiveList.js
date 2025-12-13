@@ -25,4 +25,6 @@ const ExpensiveList = React.memo(({ items, filter, onItemClick }) => {
   );
 });
 
+ExpensiveList.displayName = 'ExpensiveList';
+
 export default ExpensiveList;
