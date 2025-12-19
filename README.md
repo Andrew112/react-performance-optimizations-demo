@@ -1,6 +1,6 @@
 # React Performance Optimizations Demo
 
-A comprehensive demonstration of React performance optimization techniques including `React.memo`, `useMemo`, `useCallback`, and the React Profiler API. This demonstartion helps with getting experience in senior level React programming.
+A comprehensive demonstration of React performance optimization techniques including `React.memo`, `useMemo`, `useCallback`, and the React Profiler API. This demonstration helps with getting experience in senior level React programming.
 
 ## 🌐 Live Demo
 
