@@ -4,7 +4,6 @@ A comprehensive demonstration of React performance optimization techniques inclu
 
 ## 🔗 Links
 
-- **GitHub Repository**: [https://github.com/Andrew112/react-performance-optimizations-demo](https://github.com/Andrew112/react-performance-optimizations-demo)
 - **Live Demo**: [https://andrew112.github.io/react-performance-optimizations-demo/](https://andrew112.github.io/react-performance-optimizations-demo/)
 
 ## 📋 Overview
