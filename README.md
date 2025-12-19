@@ -1,6 +1,10 @@
 # React Performance Optimizations Demo
 
-A comprehensive demonstration of React performance optimization techniques including `React.memo`, `useMemo`, `useCallback`, and the React Profiler API. This demonstartion helps with getting experience in senior level React programming.
+A comprehensive demonstration of React performance optimization techniques including `React.memo`, `useMemo`, `useCallback`, and the React Profiler API. This demonstration helps with getting experience in senior level React programming.
+
+## 🌐 Live Demo
+
+**[View Live Demo](https://andrew112.github.io/react-performance-optimizations-demo/)**
 
 ## 📋 Overview
 
@@ -130,6 +134,31 @@ Launches the test runner in interactive watch mode
 
 ### `npm run build`
 Builds the app for production to the `build` folder
+
+### `npm run deploy`
+Builds and deploys the app to GitHub Pages
+
+## 🚀 Deployment
+
+### GitHub Pages
+
+This project is configured for automatic deployment to GitHub Pages. Every push to the `main` branch triggers a deployment workflow.
+
+#### Manual Deployment
+
+You can also deploy manually using:
+```bash
+npm run deploy
+```
+
+#### Setup Instructions
+
+If you fork this repository and want to host it on GitHub Pages:
+
+1. Go to your repository Settings → Pages
+2. Select "GitHub Actions" as the source
+3. Push to the `main` branch or run the workflow manually
+4. Your site will be available at `https://[your-username].github.io/react-performance-optimizations-demo/`
 
 ## 📚 Learn More
 
