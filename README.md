@@ -2,6 +2,11 @@
 
 A comprehensive demonstration of React performance optimization techniques including `React.memo`, `useMemo`, `useCallback`, and the React Profiler API. This demonstartion helps with getting experience in senior level React programming.
 
+## 🔗 Links
+
+- **GitHub Repository**: [https://github.com/Andrew112/react-performance-optimizations-demo](https://github.com/Andrew112/react-performance-optimizations-demo)
+- **Live Demo**: [https://andrew112.github.io/react-performance-optimizations-demo/](https://andrew112.github.io/react-performance-optimizations-demo/)
+
 ## 📋 Overview
 
 This project showcases best practices for optimizing React application performance. It demonstrates how to prevent unnecessary re-renders, memoize expensive computations, and measure component performance using React's built-in tools.
@@ -130,6 +135,9 @@ Launches the test runner in interactive watch mode
 
 ### `npm run build`
 Builds the app for production to the `build` folder
+
+### `npm run deploy`
+Deploys the app to GitHub Pages (requires appropriate permissions)
 
 ## 📚 Learn More
 
