@@ -28,7 +28,7 @@ function App() {
       baseDuration,
       startTime,
       commitTime,
-      interactions: interactions.size
+      interactions: interactions?.size ?? 0
     });
   };
 

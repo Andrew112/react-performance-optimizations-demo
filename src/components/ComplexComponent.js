@@ -17,4 +17,6 @@ const ComplexComponent = React.memo(
   }
 );
 
+ComplexComponent.displayName = 'ComplexComponent';
+
 export default ComplexComponent;
