@@ -12,3 +12,117 @@
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
+
+/* Profiler Panel Styles */
+.profiler-panel {
+  margin-top: 30px;
+  padding: 15px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.profiler-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.profiler-panel__header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.profiler-panel__header button {
+  padding: 5px 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.profiler-panel__header button:hover {
+  background: #0056b3;
+}
+
+.profiler-panel__controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.profiler-panel__controls p {
+  margin: 0;
+  font-weight: bold;
+  color: #555;
+}
+
+.profiler-panel__controls button {
+  padding: 8px 15px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.profiler-panel__controls button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.profiler-panel__controls button:not(:disabled):hover {
+  background: #218838;
+}
+
+.profiler-panel__list {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+.profiler-panel__list table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 0.85em;
+}
+
+.profiler-panel__list thead {
+  background: #007bff;
+  color: white;
+}
+
+.profiler-panel__list th,
+.profiler-panel__list td {
+  padding: 8px 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.profiler-panel__list tbody tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+.profiler-panel__list tbody tr:hover {
+  background: #e9ecef;
+}
+
+.profiler-panel__note {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #666;
+  font-style: italic;
+}
+
+.profiler-panel__empty {
+  color: #999;
+  font-style: italic;
+  margin: 10px 0;
+}
