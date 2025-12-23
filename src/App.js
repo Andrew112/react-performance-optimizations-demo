@@ -1,8 +1,9 @@
 import "./styles.css";
 
-import React, { Profiler, useCallback, useState } from "react";
+import React, { Profiler, useCallback, useEffect, useRef, useState } from "react";
 
 import ExpensiveList from "./components/ExpensiveList";
+import ProfilerPanel from "./components/ProfilerPanel";
 import { generateItems } from "./utils/generateItems";
 
 function App() {
@@ -10,6 +11,18 @@ function App() {
   const [items] = useState(generateItems);
   const [filter, setFilter] = useState("all");
   const [enableProfiling, setEnableProfiling] = useState(true);
+  const [profilingEntries, setProfilingEntries] = useState([]);
+  const batchTimeoutRef = useRef(null);
+  const pendingEntriesRef = useRef([]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (batchTimeoutRef.current) {
+        clearTimeout(batchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Profiler callback
   const onRenderCallback = (
@@ -18,18 +31,59 @@ function App() {
     actualDuration,     // Time spent rendering the committed update
     baseDuration,       // Estimated duration without memoization
     startTime,          // When React started rendering
-    commitTime,         // When React committed
-    interactions        // Interaction set
+    commitTime          // When React committed
   ) => {
+    const entry = {
+      id,
+      phase,
+      actualDuration,
+      baseDuration,
+      startTime,
+      commitTime,
+      interactionsCount: 0, // interactions API removed in React 19
+      timestamp: Date.now(),
+    };
+
+    // Batch entries to avoid excessive re-renders
+    pendingEntriesRef.current.push(entry);
+    
+    if (batchTimeoutRef.current) {
+      clearTimeout(batchTimeoutRef.current);
+    }
+    
+    batchTimeoutRef.current = setTimeout(() => {
+      setProfilingEntries((prev) => [...pendingEntriesRef.current, ...prev]);
+      pendingEntriesRef.current = [];
+    }, 100);
+
+    // Also log to console
     console.log(`⚡ Profiler Report: ${id}`);
     console.table({
       phase,
       actualDuration,
       baseDuration,
       startTime,
-      commitTime,
-      interactions: interactions.size
+      commitTime
     });
+  };
+
+  // Download profiling logs as JSON
+  const handleDownloadLogs = () => {
+    const dataStr = JSON.stringify(profilingEntries, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `profiler-logs-${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Clear profiling logs
+  const handleClearLogs = () => {
+    setProfilingEntries([]);
   };
 
   const handleItemClick = useCallback((item) => {
@@ -71,6 +125,12 @@ function App() {
           onItemClick={handleItemClick}
         />
       )}
+
+      <ProfilerPanel
+        entries={profilingEntries}
+        onDownload={handleDownloadLogs}
+        onClear={handleClearLogs}
+      />
     </div>
   );
 }
